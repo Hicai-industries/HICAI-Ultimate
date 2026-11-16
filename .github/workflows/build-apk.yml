@@ -1,0 +1,46 @@
+name: Build HICAI Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get HICAI source code
+        uses: actions/checkout@v4
+
+      - name: Prepare application
+        run: |
+          cp hicai_ultimate_v13.py main.py
+          cat > buildozer.spec <<'EOF'
+          [app]
+          title = HICAI Ultimate
+          package.name = hicaiultimate
+          package.domain = org.hicaiindustries
+          source.dir = .
+          source.include_exts = py,json,csv,png,jpg,kv
+          version = 13.1
+          requirements = python3,kivy
+          orientation = portrait
+          fullscreen = 0
+          android.accept_sdk_license = True
+
+          [buildozer]
+          log_level = 2
+          warn_on_root = 1
+          EOF
+
+      - name: Build APK
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          workdir: .
+          buildozer_version: stable
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HICAI-Android-APK
+          path: ${{ steps.buildozer.outputs.filename }}
