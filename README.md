@@ -1,4 +1,4 @@
-HICAI Ultimate V13.1
+HICAI Ultimate V13
 
 Smart Student Management and Study Planner
 
